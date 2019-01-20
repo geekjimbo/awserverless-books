@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Globals:
+  Api:
+    Cors:
+      AllowHeaders: '''*'''
+      AllowMethods: '''*'''
+      AllowOrigin: '''*'''
+Resources:
+  BookTable:
+    Type: AWS::Serverless::SimpleTable
+  Books:
+    Properties:
+      CodeUri: s3://artifacts-for-coco-lambda/dc9384d151b6d55212623191a3253781
+      Environment:
+        Variables:
+          TABLE_NAME:
+            Ref: BookTable
+      Events:
+        AddBook:
+          Properties:
+            Method: post
+            Path: /books
+          Type: Api
+        Book:
+          Properties:
+            Method: any
+            Path: /books/{id}
+          Type: Api
+        ListBooks:
+          Properties:
+            Method: get
+            Path: /books
+          Type: Api
+      Handler: books.handler
+      Policies: AmazonDynamoDBFullAccess
+      Runtime: nodejs8.10
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31
